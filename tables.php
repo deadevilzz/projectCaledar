@@ -449,6 +449,7 @@ function add_date($givendate,$day=0,$mth=0,$yr=0)
 			$("total"+i).value = "";
 			$("comment"+i).value = "";
 			$("etc"+i).value = "";*/
+			$("#total"+i).css('background-color','#e5e5e5');
 			document.getElementById("sr"+i).value = "";
 			document.getElementById("project"+i).value = "";
 			document.getElementById("all"+i).value = "";
