@@ -10,7 +10,7 @@
 		<select name="pe" style="padding:5px;margin:20px;">
 			<?php 
 				require('config.php');
-				$sql = "SELECT username FROM user";
+				$sql = "SELECT username FROM user2";
 				$query = mysql_query($sql);
 				while($row = mysql_fetch_assoc($query))
 				{
@@ -21,7 +21,7 @@
 				}
 			?>
 		</select>
-		<input type="submit" value="save" id="submit2">
+		<input type="submit" value="choose" id="submit2">
 	</form>
 <?php 
 	require('config.php');
@@ -33,39 +33,41 @@
 	if(isset($_POST['total'][1]))
 	{	for($i=0;$i<5;$i++)
 		if($_POST['total'][$i]>0&&$_POST['datepost'][$i]!=0&&$_POST['total'][$i]<=8)
-		{
+		{    if($_POST['total'][$i]>8)
+	         { echo "total over 8 can not save haha"; }
+
 			$found = searchDB($_POST['datepost'][$i],$_POST['pe'],$objConnect);
 			//echo $found;
 			if($found)
 			{
 				/////////++++++++++++++++++++++++++++++++++++++++++++++++++++
-				$sql = "UPDATE calender SET sr='".$_POST['sr'][$i]."',project='".$_POST['project'][$i]."',";
-				$sql.= "all_leaves='".$_POST['all'][$i]."',remain='".$_POST['remain'][$i]."',meeting='".$_POST['meeting'][$i]."',";
-				$sql.= "general='".$_POST['general'][$i]."',total='".$_POST['total'][$i]."',etc='".$_POST['etc'][$i]."',";
-				$sql.= "comment='".$_POST['comment'][$i]."',PE='".$_POST['pe']."'";
-				$sql.= " WHERE date='".$_POST['datepost'][$i]."' AND PE='".$_POST['pe']."'";
+				$sql = "UPDATE effort SET SR='".$_POST['sr'][$i]."',Project='".$_POST['project'][$i]."',";
+				$sql.= "All_leaves='".$_POST['all'][$i]."',ETC='".$_POST['etc'][$i]."',Remaining_Open_Dev='".$_POST['remain'][$i]."',Meeting='".$_POST['meeting'][$i]."',";
+				$sql.= "General_Management='".$_POST['general'][$i]."',Total='".$_POST['total'][$i]."',";
+				$sql.= "Comment_effort='".$_POST['comment'][$i]."',PE='".$_POST['pe']."'";
+				$sql.= "WHERE date_effort='".$_POST['datepost'][$i]."' AND pe='".$_POST['pe']."'";
 				//echo $sql;
 				mysql_query($sql,$objConnect) or die("SQL Error");
 			}
 			else
 			{
 				/////////++++++++++++++++++++++++++++++++++++++++++++++++++++
-				$sql = "INSERT INTO calender (sr,date,project,all_leaves,remain,meeting,general,total,comment,etc,pe)";
-				$sql.= "VALUES('".$_POST['sr'][$i]."','".$_POST['datepost'][$i]."','".$_POST['project'][$i]."','".$_POST['all'][$i]."',";
-				$sql.= "'".$_POST['remain'][$i]."','".$_POST['meeting'][$i]."','".$_POST['general'][$i]."','".$_POST['total'][$i]."',";
-				$sql.= "'".$_POST['comment'][$i]."','".$_POST['etc'][$i]."','".$_POST['pe']."')";
+				$sql = "INSERT INTO effort (date_effort,SR,Project,All_leaves,ETC,Remaining_Open_Dev,Meeting,General_Management,Total,Comment_effort,PE)";
+				$sql.= "VALUES('".$_POST['datepost'][$i]."','".$_POST['sr'][$i]."','".$_POST['project'][$i]."','".$_POST['all'][$i]."',";
+				$sql.= "'".$_POST['etc'][$i]."','".$_POST['remain'][$i]."','".$_POST['meeting'][$i]."','".$_POST['general'][$i]."','".$_POST['total'][$i]."',";
+				$sql.= "'".$_POST['comment'][$i]."','".$_POST['pe']."')";
 				//echo $sql;
 				mysql_query($sql,$objConnect) or die("SQL error");
 			}
 		}
 		else if($_POST['total'][$i]>8)
-	     { echo("<script> alert('total over 8 can not save haha');</script>"); }
+	     { echo("<script> alert('total over 8 hour per day can not save haha');</script>"); }
 	}
 
 	function searchDB($datepost,$pe,$objConnect)
 	{
 		/////////++++++++++++++++++++++++++++++++++++++++++++++++++++
-		$sql = "SELECT * FROM calender WHERE date='$datepost' AND PE='$pe'" ;
+		$sql = "SELECT * FROM effort WHERE date_effort='$datepost' AND PE = '$pe'";
 		//echo $sql;
 		$query = mysql_query($sql,$objConnect);
 		$row = mysql_fetch_assoc($query);
@@ -75,7 +77,7 @@
 	//echo var_dump($result);
 	function selectDB($objConnect,$pe)
 	{	$result = array();
-		$sql = "SELECT * FROM calender WHERE PE='".$pe."'";
+		$sql = "SELECT * FROM effort WHERE PE='".$pe."'";
 		//echo $sql;
 		$query = mysql_query($sql,$objConnect)or die('Sql error');
 		while ($obResult = mysql_fetch_array($query)) 
@@ -110,7 +112,7 @@ function add_date($givendate,$day=0,$mth=0,$yr=0)
 }*/
  ?>
 <form action="#" method="POST">
-<p><input class="submit" type="button" onclick="back();" value="<<<"><input class="submit" type="button" onclick="forward();" value=">>>"></p>
+<center><p><input class="submit" type="button" onclick="back();" value="<<<">      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <input class="submit" type="button" onclick="forward();" value=">>>"></p></center>
 <table id="price-chart" cellspacing="0" cellpadding="0" align="center"> 
 	<tbody>
 	<tr class="even">
@@ -180,7 +182,7 @@ function add_date($givendate,$day=0,$mth=0,$yr=0)
 	</tr>
  
 	<tr class="even">
-		<td class="left-col-captions">etc</td>
+		<td class="left-col-captions">ETC</td>
 		<td class="table-col-0">
 			<p><textarea id="etc0" name="etc[]" value="" style="width:80px;height:20px;background-color:#e5e5e5;"/></textarea></p>
 		</td>
@@ -263,19 +265,19 @@ function add_date($givendate,$day=0,$mth=0,$yr=0)
 	<tr class="even" style="height:100px;font-weight:bold;">
 	<td class="left-col-captions">Total</td>
 	<td class="table-col-0">
-			<p><textarea id="total0" name="total[]" value="0" style="width:80px;height:20px;background-color:#e5e5e5;"/></textarea></p>
+			<p><textarea id="total0" name="total[]" value="" style="width:80px;height:20px;background-color:#e5e5e5;"/></textarea></p>
 		</td>
 		<td class="table-col-1">
-			<p><textarea id="total1" name="total[]" value="0" style="width:80px;height:20px;background-color:#e5e5e5;"/></textarea></p>
+			<p><textarea id="total1" name="total[]" value="" style="width:80px;height:20px;background-color:#e5e5e5;"/></textarea></p>
 		</td> 
 		<td class="table-col-2">
-			<p><textarea id="total2" name="total[]" value="0" style="width:80px;height:20px;background-color:#e5e5e5;"/></textarea></p>
+			<p><textarea id="total2" name="total[]" value="" style="width:80px;height:20px;background-color:#e5e5e5;"/></textarea></p>
 		</td>
 		<td class="table-col-3">
-			<p><textarea id="total3" name="total[]" value="0" style="width:80px;height:20px;background-color:#e5e5e5;"/></textarea></p>
+			<p><textarea id="total3" name="total[]" value="" style="width:80px;height:20px;background-color:#e5e5e5;"/></textarea></p>
 		</td> 
 		<td class="table-col-4">
-			<p><textarea id="total4" name="total[]" value="0" style="width:80px;height:20px;background-color:#e5e5e5;"/></textarea></p>
+			<p><textarea id="total4" name="total[]" value="" style="width:80px;height:20px;background-color:#e5e5e5;"/></textarea></p>
 		</td>
  
 	</tr>
@@ -310,12 +312,12 @@ function add_date($givendate,$day=0,$mth=0,$yr=0)
 	<input type="hidden" name="pe" id="pe" value="<?=$_POST['pe']?>" />
 	</tbody>
 	</table>
-	<p><input type="submit" value="save" class="submit"></p> 
+	<center><input type="submit" value="save" class="submit"></center> 
 </form>
 	<script type="text/javascript"> 
 	var click = 0;
 	var arDate = [];
-	var sr = [];var project = [];var all_leaves = [];var remain = [];var meeting = [];var general =[];var total=[];var comment=[];var date = [];var etc=[];var pe=[];
+	var sr = [];var project = [];var all_leaves = [];var remain = [];var meeting = [];var general =[];var total=[];var comment=[];var date = [];var etc=[];
 	/**
 	* read all data from database
 	**/
@@ -324,22 +326,20 @@ function add_date($givendate,$day=0,$mth=0,$yr=0)
 			if(isset($_POST['pe'])) 
 			{	$pe = $_POST['pe'];
 				$result = array();
-				//echo $pe;
-				$sql = "SELECT * FROM calender WHERE PE='".$pe."'";
+				$sql = "SELECT * FROM effort WHERE PE='".$pe."'";
 				$query = mysql_query($sql,$objConnect)or die ('sql error');$i=0;
 				/////////++++++++++++++++++++++++++++++++++++++++++++++++++++
 				while ($obResult = mysql_fetch_array($query)) 
-				{  	$sr = empty($obResult['sr']) ? " " : $obResult['sr'];
-					$project = empty($obResult['project']) ? " " : $obResult['project'];
-					$date = empty($obResult['date']) ? " " : $obResult['date'];
-					$all_leaves = empty($obResult['all_leaves']) ? " " : $obResult['all_leaves'];
-					$remain = empty($obResult['remain']) ? " " : $obResult['remain'];
-					$meeting = empty($obResult['meeting']) ? " " : $obResult['meeting'];
-					$general =empty($obResult['general']) ? " " : $obResult['general'];
-					$total = empty($obResult['total']) ? " " : $obResult['total'];
-					$comment = empty($obResult['comment']) ? " " : $obResult['comment'];
-					$etc = empty($obResult['etc']) ? " " : $obResult['etc'];
-					
+				{  	$sr = empty($obResult['SR']) ? " " : $obResult['SR'];
+					$project = empty($obResult['Project']) ? " " : $obResult['Project'];
+					$date = empty($obResult['date_effort']) ? " " : $obResult['date_effort'];
+					$all_leaves = empty($obResult['All_leaves']) ? " " : $obResult['All_leaves'];
+					$remain = empty($obResult['Remaining_Open_Dev']) ? " " : $obResult['Remaining_Open_Dev'];
+					$meeting = empty($obResult['Meeting']) ? " " : $obResult['Meeting'];
+					$general =empty($obResult['General_Management']) ? " " : $obResult['General_Management'];
+					$total = empty($obResult['Total']) ? " " : $obResult['Total'];
+					$comment = empty($obResult['Comment_effort']) ? " " : $obResult['Comment_effort'];
+					$etc = empty($obResult['ETC']) ? " " : $obResult['ETC'];
 	?>
 				sr.push('<?=$sr?>');
 				project.push('<?=$project?>');
@@ -351,7 +351,6 @@ function add_date($givendate,$day=0,$mth=0,$yr=0)
 				total.push('<?=$total?>');
 				comment.push('<?=$comment?>');
 				etc.push('<?=$etc?>');
-				
 				
 	<?php	} } ?>
 	/**
@@ -398,7 +397,7 @@ function add_date($givendate,$day=0,$mth=0,$yr=0)
 		{	var j=0;var found=false;
 			//alert('test');
 			while(j<sr.length&&!found)
-			{	//alert(date[j]+" "+arDate2[i]);
+			{	//alert(date[j]+"1"+arDate2[i]);
 				if(date[j]==arDate2[i])
 				{
 					/*document.all["sr"+i].innerHTML = sr[j];
@@ -489,7 +488,9 @@ function setPE()
 		showTotalWeek();
 	}
 
+	
+
 	</script>
 	<script type="text/javascript" src="jquery.js"></script>
 	<script type="text/javascript" src="tables.js"></script>
-</html>
+	
